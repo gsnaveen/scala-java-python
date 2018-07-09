@@ -19,6 +19,7 @@ tabletran = tdefile.addTable("Extract",tableDef)
 #Create new Row 
 newrow = tde.Row(tableDef)
 # Adding data value
+# First param represents sequence of the column
 newrow.setCharString(0,'myCompany')
 newrow.setDouble(1,1000)
 newrow.setDouble(2,888)
