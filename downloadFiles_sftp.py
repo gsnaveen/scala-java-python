@@ -9,3 +9,8 @@ with pysftp.Connection('download.myweb.com', username='myusername', password='my
             if re.search("data_"+ fileDate +".*\.csv\.gz", filename):
                 print(filename)
                 sftp.get(filename, "./data/"+ filename, preserve_mtime=True)
+                
+try:
+    call(["gunzip", "*" + fileDate + "*"]) 
+except:
+    print("Error while Unzipping")
