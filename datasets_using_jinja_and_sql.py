@@ -59,3 +59,13 @@ for report,SQL in SQLDict.items():
         getdata(report,SQL)
     else:
         getdata(report,SQL)
+        
+""" 
+### main.sql.j2
+
+{% include "page.sql.j2" %}
+
+{% include "./events/events.sql.j2" %}
+
+{% include "cpr.sql.j2" %}
+"""
