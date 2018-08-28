@@ -79,10 +79,8 @@ Select page
 ,count(distinct session_id) as visits
 ,count(key) as views
 from web_data_table
-where viewdate between '{{StartDate}}' and '{{EndDate}}'
-and page like '{{page}}%'
-group by page
-order by Views desc
+where viewdate between '{{StartDate}}' and '{{EndDate}}' and page like '{{page}}%'
+group by page order by Views desc
 ### SQL Ends here
 SQLEND
 """
