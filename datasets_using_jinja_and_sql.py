@@ -67,5 +67,22 @@ for report,SQL in SQLDict.items():
 
 {% include "./events/events.sql.j2" %}
 
-{% include "cpr.sql.j2" %}
+{% include "users.sql.j2" %}
+"""
+
+"""
+### page.sql.j2
+SQLNAME=STATS_BY_PAGE
+### SQL starts here
+Select page
+,count (distinct userid ) as user
+,count(distinct session_id) as visits
+,count(key) as views
+from web_data_table
+where viewdate between '{{StartDate}}' and '{{EndDate}}'
+and page like '{{page}}%'
+group by page
+order by Views desc
+### SQL Ends here
+SQLEND
 """
