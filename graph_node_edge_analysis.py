@@ -1,4 +1,3 @@
-import psycopg2
 import pandas as pd
 import networkx as nx
 
@@ -62,3 +61,5 @@ import matplotlib.pyplot as plt
 nx.draw(G)
 plt.show()
 plt.savefig("path.png")
+
+### Input file has 2 fields Parent and Child
