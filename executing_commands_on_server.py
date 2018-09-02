@@ -1,3 +1,5 @@
+# Execute the command on the server. Save the output to SQLlite database and query it.
+
 from paramiko import SSHClient
 import sqlite3
 import paramiko
