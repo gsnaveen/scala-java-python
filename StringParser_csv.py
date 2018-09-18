@@ -22,6 +22,4 @@ def parse(line):
 myString = "Hello,World"
 myString = "'this',is,'good,bad'"
 
-
 parse(myString)
-
