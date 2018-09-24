@@ -1,10 +1,15 @@
 import os
 import pandas as pd
 
-basePath = "./mlData"
-joinKey = ["customer"]
+basePath = "./mlData" # Input directory of the datasets
+joinKey = ["customer"] # Common keys for the datasets. to be joined on
+
 inData = os.listdir(basePath)
 totalFiles = len(inData)
+
+if totalFiles < 2:
+    print("Not enough Files to merge")
+    return
 
 toProcessFile = inData[0]
 mainDataSet = pd.read_csv(basePath+"/"+toProcessFile,sep="\t",header='infer')
