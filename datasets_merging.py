@@ -1,4 +1,4 @@
-import os
+import os,sys
 import pandas as pd
 
 basePath = "./mlData"
@@ -8,8 +8,7 @@ inData = os.listdir(basePath)
 totalFiles = len(inData)
 
 if totalFiles < 2:
-    print("Not enough Files to merge")
-    exit
+    sys.exit("Not enough Files to merge")
 
 toProcessFile = inData[0]
 mainDataSet = pd.read_csv(basePath+"/"+toProcessFile,sep="\t",header='infer')
