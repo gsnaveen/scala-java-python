@@ -1,12 +1,14 @@
-import java.io.File
+// This program will process a SQL and print out the Select and group by with possible table source from the SQL.
+// It will help in identifying the most commonly used attribute  and group by for creating aggregates
 
+import java.io.File
 import scala.io.Source
 
 object sqlformat extends App{
 
    case class SqlDetails(sqlName: String, attribute: Option[String] = None,alias:Option[String] = None, recordType:String, tableName :String)
 
-    val tableMap = scala.collection.mutable.HashMap.empty[String,String]
+    var tableMap = scala.collection.mutable.HashMap.empty[String,String]
 
     val selectpat = "select.*".r;   var selectStr = ""; var processAttribute:String = ""
 
@@ -39,7 +41,7 @@ object sqlformat extends App{
 
   for (filenamelist <- filelist) {
 
-    processAttribute = "";selectStr = ""; fromStr = "";whereStr="";groupbyStr = "";orderbyStr = ""
+    processAttribute = "";selectStr = ""; fromStr = "";whereStr="";groupbyStr = "";orderbyStr = ""; tableMap = tableMap.empty
 
     filename = filenamelist.toString
     val bufferedSource = Source.fromFile(filename)
@@ -148,11 +150,11 @@ object sqlformat extends App{
     }
 
 
-    //   for (list1 <- outData){
-    //    println(list1.tableName)
-    //  }
+       for (list1 <- outData){
+        println(list1.sqlName +"\t"+ list1.attribute.get +"\t"+ list1.alias.get +"\t"+ list1.recordType +"\t"+ list1.tableName.replace("List(","").replace(")",""))
+      }
 
-    outData.foreach(println)
+//    outData.foreach(println)
     //  groupbyStr.split(",").foreach(println)
     //
     //    println(selectStr)
