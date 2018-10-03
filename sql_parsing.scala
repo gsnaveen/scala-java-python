@@ -1,7 +1,9 @@
 // This program will process a SQL and print out the Select and group by with possible table source from the SQL.
-// It will help in identifying the most commonly used attribute  and group by for creating aggregates
+// It will help in identifying the most commonly used attribute  and group by for creating aggregates.
+// List the tables in the SQL as some are only used for joining and no attributes are selected.
 
 import java.io.File
+
 import scala.io.Source
 
 object sqlformat extends App{
@@ -118,7 +120,7 @@ object sqlformat extends App{
     var tableName = ""
 
     for (att <- selectStr.split(",")) {
-      tableName = tableMap.values.toList.toString
+      tableName = tableMap.values.toList.mkString(",")
 //      println(att)
       att.trim match {
         case x if x.contains(" as ") => val splitValue = x.split(" as ")
@@ -150,8 +152,12 @@ object sqlformat extends App{
     }
 
 
+    for ((key,value) <- tableMap) {
+      outData = outData ::: List(new SqlDetails(sqlName = filename, attribute = None, alias = None, recordType = "tables", tableName = value))
+    }
+
        for (list1 <- outData){
-        println(list1.sqlName +"\t"+ list1.attribute.get +"\t"+ list1.alias.get +"\t"+ list1.recordType +"\t"+ list1.tableName.replace("List(","").replace(")",""))
+        println(list1.sqlName +"\t"+ list1.attribute.getOrElse(None)+"\t"+ list1.alias.getOrElse(None) +"\t"+ list1.recordType +"\t"+ list1.tableName.replace("List(","").replace(")",""))
       }
 
 //    outData.foreach(println)
