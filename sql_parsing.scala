@@ -2,8 +2,7 @@
 // It will help in identifying the most commonly used attribute  and group by for creating aggregates.
 // List the tables in the SQL as some are only used for joining and no attributes are selected.
 
-import java.io.File
-
+import java.io._
 import scala.io.Source
 
 object sqlformat extends App{
@@ -35,7 +34,8 @@ object sqlformat extends App{
 
     var outData = List.empty[SqlDetails]
 
-  val folder = "C:\\myScalaA\\sql"
+  //val folder = "C:\\myScalaA\\sql"
+  val folder = "C:\\Mywork\\Compare\\AA-Work\\sqls"
   val d = new File(folder)
   if (d.exists && d.isDirectory) {
     filelist = d.listFiles.filter(_.isFile).toList.filter{file => file.toString.endsWith(".sql")}
@@ -52,7 +52,7 @@ object sqlformat extends App{
 
     var outbuffer = ""
     for (line <- bufferedSource.getLines) {
-      outbuffer += line.trim.replaceAll(" +", " ").toLowerCase.replace("select", "select\n")
+      outbuffer += line.trim.toLowerCase.replaceAll(" +", " ").replace("select", "select\n")
         .replace("from", "\nfrom\n")
         .replace("where", "\nwhere\n")
         .replace("group by", "\ngroup by\n")
@@ -89,6 +89,7 @@ object sqlformat extends App{
         case "order by" => if (lowercaseLine != "order by") {
           orderbyStr += " " + lowercaseLine
         }
+        case _ => ""
       }
 
     }
@@ -117,9 +118,42 @@ object sqlformat extends App{
 //    print(tableMap)
 
     //selectStr.split(",").foreach(println)
+
+  def processSelect(inStr: String): Array[String] = {
+                var currentAttribute = ""
+                var attributeArray = Array.empty[String]
+                var noBrackets = 0
+
+                for (char <- inStr) {
+                //      println(char)
+                if (char == '(') {
+                noBrackets += 1
+                currentAttribute += char
+              }
+                else if (char == ')') {
+                noBrackets -= 1
+                currentAttribute += char
+              }
+                else if (char == ',' && noBrackets == 0) {
+                //attributeList = attributeList ::: List(currentAttribute)
+                attributeArray = attributeArray :+ currentAttribute.replace (" +", " ")
+                currentAttribute = ""
+              } else {
+                currentAttribute += char
+              }
+              }
+                attributeArray = attributeArray :+ currentAttribute
+
+              attributeArray
+    }
+
     var tableName = ""
 
-    for (att <- selectStr.split(",")) {
+//    for (att <- selectStr.split(",")) {
+    val attributeArray = processSelect(selectStr)
+
+    for (att <- attributeArray) {
+
       tableName = tableMap.values.toList.mkString(",")
 //      println(att)
       att.trim match {
@@ -130,35 +164,41 @@ object sqlformat extends App{
           outData = outData ::: List(SqlDetails(sqlName = filename, attribute = Some(splitValue(0)), alias = Some(splitValue(1)), recordType = "select", tableName = tableName))
 
         case x if x.contains(" ") => val splitValue = x.split(" ")
-          if (splitValue(0).contains(".")) {
-            tableName = tableMap.getOrElse(splitValue(0).split("\\.")(0), tableName)
+
+          if (splitValue.length == 2) {
+
+            if (splitValue(0).contains(".")) {
+              tableName = tableMap.getOrElse(splitValue(0).split("\\.")(0), tableName)
+            }
+            outData = outData ::: List(SqlDetails(sqlName = filename, attribute = Some(splitValue(0)), alias = Some(splitValue(1)), recordType = "select", tableName = tableName))
           }
-          outData = outData ::: List(new SqlDetails(sqlName = filename, attribute = Some(splitValue(0)), alias = Some(splitValue(1)), recordType = "select", tableName = tableName))
         case x =>
           if (x.contains(".")) {
             tableName = tableMap.getOrElse(x.split("\\.")(0), tableName)
           }
-          outData = outData ::: List(new SqlDetails(sqlName = filename, attribute = Some(x), alias = Some(x), recordType = "select", tableName = tableName))
+          outData = outData ::: List( SqlDetails(sqlName = filename, attribute = Some(x), alias = Some(x), recordType = "select", tableName = tableName))
       }
 
     }
 
-    for (att <- groupbyStr.split(",")) {
+    val groupbyattributeArray = processSelect(groupbyStr)
+//    groupbyattributeArray.foreach(println)
+
+//    for (att <- groupbyStr.split(",")) {
+    for (att <- groupbyattributeArray) {
+      tableName = tableMap.values.toList.mkString(",")
       val atttrim = att.trim
       if (atttrim.contains(".")) {
-        tableName = tableMap(atttrim.split("\\.")(0))
+        tableName = tableMap.getOrElse(atttrim.split("\\.")(0),tableName)
       }
-      outData = outData ::: List(new SqlDetails(sqlName = filename, attribute = Some(atttrim), alias = Some(atttrim), recordType = "group by", tableName = tableName))
+      outData = outData ::: List( SqlDetails(sqlName = filename, attribute = Some(atttrim), alias = Some(atttrim), recordType = "group by", tableName = tableName))
     }
 
 
     for ((key,value) <- tableMap) {
-      outData = outData ::: List(new SqlDetails(sqlName = filename, attribute = None, alias = None, recordType = "tables", tableName = value))
+      outData = outData ::: List( SqlDetails(sqlName = filename, attribute = None, alias = None, recordType = "tables", tableName = value))
     }
 
-       for (list1 <- outData){
-        println(list1.sqlName +"\t"+ list1.attribute.getOrElse(None)+"\t"+ list1.alias.getOrElse(None) +"\t"+ list1.recordType +"\t"+ list1.tableName.replace("List(","").replace(")",""))
-      }
 
 //    outData.foreach(println)
     //  groupbyStr.split(",").foreach(println)
@@ -169,4 +209,14 @@ object sqlformat extends App{
     //    println(groupbyStr)
     //    println(orderbyStr)
   }
+
+  val  fw =new FileWriter("C:\\Mywork\\Compare\\AA-Work\\sqls\\mydata2.out",true)
+  for (list1 <- outData){
+//    println(list1.sqlName +"\t"+ list1.attribute.getOrElse(None)+"\t"+ list1.alias.getOrElse(None) +"\t"+ list1.recordType +"\t"+ list1.tableName)
+
+    fw.write(list1.sqlName +"\t"+ list1.attribute.getOrElse(None)+"\t"+ list1.alias.getOrElse(None) +"\t"+ list1.recordType +"\t"+ list1.tableName +"\n")
+
+  }
+  fw.close()
+
   }
