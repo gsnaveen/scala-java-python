@@ -2,7 +2,9 @@
 // It will help in identifying the most commonly used attribute  and group by for creating aggregates.
 // List the tables in the SQL as some are only used for joining and no attributes are selected.
 
+//import java.io.File
 import java.io._
+
 import scala.io.Source
 
 object sqlformat extends App{
@@ -22,7 +24,7 @@ object sqlformat extends App{
     val orderbypat = ".*order by.*".r; var orderbyStr = ""
 
     var attributes: String = "";  var filename = "mysql3.sql"
-    var filelist = List.empty[File]
+//    var filelist = List.empty[File]
 
 //    getSelectCount if Select count is > 1 then there is a sub query involved
 //    getWithCount if With involved then also it has a sub query , it could be on one table.
@@ -34,12 +36,11 @@ object sqlformat extends App{
 
     var outData = List.empty[SqlDetails]
 
-  //val folder = "C:\\myScalaA\\sql"
+//  val folder = "C:\\myScalaA\\sql"
   val folder = "C:\\Mywork\\Compare\\AA-Work\\sqls"
   val d = new File(folder)
-  if (d.exists && d.isDirectory) {
-    filelist = d.listFiles.filter(_.isFile).toList.filter{file => file.toString.endsWith(".sql")}
-  }
+
+  val filelist: List[File] = if (d.exists && d.isDirectory) d.listFiles.filter(_.isFile).toList.filter{file => file.toString.endsWith(".sql")} else List.empty[File]
 
   for (filenamelist <- filelist) {
 
@@ -97,15 +98,14 @@ object sqlformat extends App{
     val inStr = fromStr.replace("inner join", ",")
       .replace("left outer join", ",")
       .replace("right outer join", ",")
+      .replace("left join", ",")
+      .replace("right join", ",")
       .replace("full outer join", ",")
       .split(",")
 
+    //creating a mutable hash map
     for (rawtab <- inStr) {
-      var tab = rawtab
-      if (rawtab.contains(" on ")) {
-        tab = rawtab.split(" on ")(0)
-      }
-
+      val tab = if (rawtab.contains(" on ")) rawtab.split(" on ")(0) else rawtab
       tab.trim match {
         case x if x.contains(" as ") => val splited = x.split(" as ")
           tableMap += (splited(1).trim -> splited(0))
@@ -115,11 +115,21 @@ object sqlformat extends App{
       }
     }
 
-//    print(tableMap)
+//adding add to the alias name if not present to be consistent
+def addas (inStringval :String): String = {
+  val inString = inStringval.replace (" +", " ").trim
+  inString match {
+    case x if (x.split(" ").length > 1 &&  ! x.contains(" as ")) =>
+      val myLast = inString.split(" ").last
+      val outString = if ((Array("end", ")") contains myLast)
+        || (Array(')', ']') contains myLast.last.toChar)) inString + " as AliasNotDefined" else inString.replace(" " + myLast, " as " + myLast)
+      outString
+    case x => x
+  }
+}
 
-    //selectStr.split(",").foreach(println)
-
-  def processSelect(inStr: String): Array[String] = {
+// takeing care of computed metrics in the Select and group by
+def processSelect(inStr: String, intype: String): Array[String] = {
                 var currentAttribute = ""
                 var attributeArray = Array.empty[String]
                 var noBrackets = 0
@@ -136,22 +146,20 @@ object sqlformat extends App{
               }
                 else if (char == ',' && noBrackets == 0) {
                 //attributeList = attributeList ::: List(currentAttribute)
-                attributeArray = attributeArray :+ currentAttribute.replace (" +", " ")
-                currentAttribute = ""
+                  attributeArray = attributeArray :+ (if (intype == "select" ) {addas(currentAttribute) } else currentAttribute)
+                  currentAttribute = ""
               } else {
                 currentAttribute += char
               }
               }
-                attributeArray = attributeArray :+ currentAttribute
+                attributeArray = attributeArray :+ (if (intype == "select" ) {addas(currentAttribute) } else currentAttribute)
 
               attributeArray
     }
 
     var tableName = ""
 
-//    for (att <- selectStr.split(",")) {
-    val attributeArray = processSelect(selectStr)
-
+    val attributeArray = processSelect(selectStr, "select")
     for (att <- attributeArray) {
 
       tableName = tableMap.values.toList.mkString(",")
@@ -171,7 +179,7 @@ object sqlformat extends App{
               tableName = tableMap.getOrElse(splitValue(0).split("\\.")(0), tableName)
             }
             outData = outData ::: List(SqlDetails(sqlName = filename, attribute = Some(splitValue(0)), alias = Some(splitValue(1)), recordType = "select", tableName = tableName))
-          }
+          } else {println(x)}
         case x =>
           if (x.contains(".")) {
             tableName = tableMap.getOrElse(x.split("\\.")(0), tableName)
@@ -181,10 +189,7 @@ object sqlformat extends App{
 
     }
 
-    val groupbyattributeArray = processSelect(groupbyStr)
-//    groupbyattributeArray.foreach(println)
-
-//    for (att <- groupbyStr.split(",")) {
+    val groupbyattributeArray = processSelect(groupbyStr,"groupby")
     for (att <- groupbyattributeArray) {
       tableName = tableMap.values.toList.mkString(",")
       val atttrim = att.trim
@@ -213,9 +218,7 @@ object sqlformat extends App{
   val  fw =new FileWriter("C:\\Mywork\\Compare\\AA-Work\\sqls\\mydata2.out",true)
   for (list1 <- outData){
 //    println(list1.sqlName +"\t"+ list1.attribute.getOrElse(None)+"\t"+ list1.alias.getOrElse(None) +"\t"+ list1.recordType +"\t"+ list1.tableName)
-
     fw.write(list1.sqlName +"\t"+ list1.attribute.getOrElse(None)+"\t"+ list1.alias.getOrElse(None) +"\t"+ list1.recordType +"\t"+ list1.tableName +"\n")
-
   }
   fw.close()
 
