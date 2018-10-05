@@ -35,11 +35,12 @@ object sqlformat extends App{
 
     var outData = List.empty[SqlDetails]
 
-//  val folder = "C:\\myScalaA\\sql"
-  val folder = "C:\\Mywork\\Compare\\AA-Work\\sqlsx"
+  val folder = "C:\\myScalaA\\sql"
+//  val folder = "C:\\Mywork\\Compare\\AA-Work\\sqlsx"
 
    Files.exists(Paths.get(folder)) match {
      case false => println("Folder does not exist")
+     case _ => ""
    }
 
   val d = new File(folder)
@@ -125,9 +126,9 @@ val addas = (inStringval :String)  => {
   val inString = inStringval.replace (" +", " ").trim
   inString match {
     case x if x.split(" ").length > 1 &&  ! x.contains(" as ") =>
-      val myLast = inString.split(" ").last
+      val myLast = x.split(" ").last
       val outString = if ((Array("end", ")") contains myLast)
-        || (Array(')', ']') contains myLast.last.toChar)) inString + " as AliasNotDefined" else inString.replace(" " + myLast, " as " + myLast)
+        || (Array(')', ']') contains myLast.last.toChar)) x + " as AliasNotDefined" else x.replace(" " + myLast, " as " + myLast)
       outString
     case x => x
   }
