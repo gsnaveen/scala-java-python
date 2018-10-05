@@ -120,7 +120,7 @@ object sqlformat extends App{
     }
 
 
-//adding add to the alias name if not present to be consistent
+//adding as to the alias name if not present to be consistent
 val addas = (inStringval :String)  => {
   val inString = inStringval.replace (" +", " ").trim
   inString match {
