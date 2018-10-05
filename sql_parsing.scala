@@ -32,8 +32,6 @@ object sqlformat extends App{
 //    getUpdateCount
 //    getDeleteCount
 
-//    var outData: List[Product with Serializable]
-
     var outData = List.empty[SqlDetails]
 
 //  val folder = "C:\\myScalaA\\sql"
@@ -103,7 +101,7 @@ object sqlformat extends App{
       .replace("full outer join", ",")
       .split(",")
 
-    //creating a mutable hash map
+    //creating a mutable hash map of alias and table name from the FROM clause of the SQL
     for (rawtab <- inStr) {
       val tab = if (rawtab.contains(" on ")) rawtab.split(" on ")(0) else rawtab
       tab.trim match {
@@ -115,11 +113,12 @@ object sqlformat extends App{
       }
     }
 
+
 //adding add to the alias name if not present to be consistent
-def addas (inStringval :String): String = {
+val addas = (inStringval :String)  => {
   val inString = inStringval.replace (" +", " ").trim
   inString match {
-    case x if (x.split(" ").length > 1 &&  ! x.contains(" as ")) =>
+    case x if x.split(" ").length > 1 &&  ! x.contains(" as ") =>
       val myLast = inString.split(" ").last
       val outString = if ((Array("end", ")") contains myLast)
         || (Array(')', ']') contains myLast.last.toChar)) inString + " as AliasNotDefined" else inString.replace(" " + myLast, " as " + myLast)
@@ -128,8 +127,9 @@ def addas (inStringval :String): String = {
   }
 }
 
+
 // takeing care of computed metrics in the Select and group by
-def processSelect(inStr: String, intype: String): Array[String] = {
+val processSelect = (inStr: String, intype: String) => {
                 var currentAttribute = ""
                 var attributeArray = Array.empty[String]
                 var noBrackets = 0
@@ -163,7 +163,6 @@ def processSelect(inStr: String, intype: String): Array[String] = {
     for (att <- attributeArray) {
 
       tableName = tableMap.values.toList.mkString(",")
-//      println(att)
       att.trim match {
         case x if x.contains(" as ") => val splitValue = x.split(" as ")
           if (splitValue(0).contains(".")) {
@@ -204,10 +203,6 @@ def processSelect(inStr: String, intype: String): Array[String] = {
       outData = outData ::: List( SqlDetails(sqlName = filename, attribute = None, alias = None, recordType = "tables", tableName = value))
     }
 
-
-//    outData.foreach(println)
-    //  groupbyStr.split(",").foreach(println)
-    //
     //    println(selectStr)
     //    println(fromStr)
     //    println(whereStr)
