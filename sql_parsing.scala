@@ -4,6 +4,7 @@
 
 //import java.io.File
 import java.io._
+import java.nio.file.{Paths, Files}
 
 import scala.io.Source
 
@@ -35,7 +36,12 @@ object sqlformat extends App{
     var outData = List.empty[SqlDetails]
 
 //  val folder = "C:\\myScalaA\\sql"
-  val folder = "C:\\Mywork\\Compare\\AA-Work\\sqls"
+  val folder = "C:\\Mywork\\Compare\\AA-Work\\sqlsx"
+
+   Files.exists(Paths.get(folder)) match {
+     case false => println("Folder does not exist")
+   }
+
   val d = new File(folder)
 
   val filelist: List[File] = if (d.exists && d.isDirectory) d.listFiles.filter(_.isFile).toList.filter{file => file.toString.endsWith(".sql")} else List.empty[File]
