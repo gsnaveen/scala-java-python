@@ -38,3 +38,30 @@ for index,row in source.iterrows():
     
     Hivedf = pd.read_sql_query(theSelect , cursor)
     Hivedf.to_csv("./data/" + fileName + "_data.tsv",sep='\t',header=True, index=False)
+
+""" """    
+textDtype = ['string']
+numDtype = ['int','bigint']
+SQL = 'Select count(*) Records,'
+df = pd.read_csv("./data/dataCheckTable.txt",sep='\t',header='infer')
+"""
+column	datatype
+eventtype	string
+eventdatetime	bigint
+visitid	string
+eventid	string
+hour_of_the_view	int
+keyword	string
+auto_suggest	string
+"""
+for index,row in df.iterrows():
+    if row['datatype'].lower() in textDtype:
+        col = "sum(case when " + row['column'] + " != '-'" + " and " + row['column'] + " != ''" + " then 1 End ) " + row['column']
+        coldmm = "count(distinct " + row['column'] + ") " + row['column'] + "_unique_values" + ", max(length( " + row['column'] + ")) " + row['column'] + "_max_len"
+        #print(row['column'])
+    elif row['datatype'].lower() in numDtype:
+        col = "sum(case when " + row['column'] + " > 0 then 1 End ) " + row['column']
+        coldmm = "min(" + row['column'] + ") " + row['column'] + "_min" + ", max(" + row['column'] + ") " + row['column'] + "_max"
+        #print(row['column'])
+    SQL += col + ',\n' + coldmm + ',\n'
+print(SQL)        
