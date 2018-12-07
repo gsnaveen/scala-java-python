@@ -27,7 +27,7 @@ for index,row in source.iterrows():
     SQL_FROM = " from " + row[TABLENAME]
     SQL_WHERE = " where viewdate = '2018-09-25' limit 100"
     
-    if row[COMPLEXTYPE] == "":
+    if row[COMPLEXTYPE] == "" or pd.isna(row[COMPLEXTYPE]):
         SQL_COLUMN =  row[COLUMNNAME]
         fileName = row[TABLENAME] +"."+ row[COLUMNNAME]
     else:
