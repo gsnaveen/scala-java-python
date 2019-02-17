@@ -13,7 +13,7 @@ inputHTMLtemplate =  "inputHTMLFile"
 template = jinja_env.get_template(inputHTMLtemplate + '.html.j2')
 
 df = pd.read_csv("./data/inputData.csv",sep=",",header=0)
-df["sav_id_s"] = df["sav_id_s"].astype(str)
+df["id"] = df["id"].astype(str)
 
 
 for email in df["email"].unique():
@@ -22,16 +22,16 @@ for email in df["email"].unique():
     # print(fullName)
     dfPlot.index = np.arange(1, len(dfPlot) + 1)
 
-    savs = list(dfPlot["sav_id_s"])
+    ids = list(dfPlot["id"])
     thescore = list(dfPlot["theScore"])
-    plt.plot(savs, thescore, color='g')
+    plt.plot(ids, thescore, color='g')
     # plt.xticks(savs, rotation='vertical')
     plt.xticks(rotation=75)
     # plt.tight_layout()
     plt.gcf().subplots_adjust(bottom=0.20)
-    plt.xlabel('SavIDs')
-    plt.ylabel('Surge Score')
-    plt.title('Surge Score Chart for ' + fullName)
+    plt.xlabel('ids')
+    plt.ylabel('theScore')
+    plt.title('Score Chart for ' + fullName)
     # plt.show()
     plt.savefig("./images/"+ email+'.jpg')
     dfPlot[["id","Node_Level_3","Node_Level_4","theScore"]].to_html("./datadf/"+ email + ".html") #,index=False
