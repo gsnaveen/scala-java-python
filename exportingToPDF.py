@@ -1,3 +1,5 @@
+#https://wkhtmltopdf.org/downloads.html
+# install and add binary/bin folder to the path
 
 import pdfkit as pdf
 import pandas as pd
