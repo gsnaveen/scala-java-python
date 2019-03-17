@@ -38,3 +38,35 @@ INSERT INTO schema1.sales(
 	   (1, 3, 10),
 	   (2, 1, 10),
 	   (2, 2, 10);
+---Running Sum
+CREATE TABLE schema1.subs_revenue
+(
+  user_id bigint,
+  subscription_date date,
+  revenue bigint
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE schema1.subs_revenue
+  OWNER TO postgres;
+
+delete from schema1.subs_revenue;
+
+INSERT INTO schema1.subs_revenue(
+            user_id, subscription_date, revenue)
+    VALUES (10,'2001-01-01', 100),
+	   (20,'2010-09-09',150),
+	   (30,'2002-02-01',200),
+	   (40,'2005-05-03',300);
+
+Window Function:
+select subscription_date,sum(revenue) over(order by subscription_date)
+from schema1.subs_revenue
+order by subscription_date
+
+Self Join:
+SELECT  a.user_id,a.revenue,sum(b.revenue) runningSum
+  FROM schema1.subs_revenue a inner join schema1.subs_revenue b on a.user_id >= b.user_id
+ group by a.user_id,a.revenue
+ order by runningSum
