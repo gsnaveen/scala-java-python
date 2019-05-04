@@ -37,5 +37,10 @@ object listTest extends App{
   for (i <- parsedlist) {
     println(i)
   }
-
+  
   parsedlist.foreach{println}
+
+  //Hive
+  select  split('1,2,3,4,5,6,7',',')
+  , array( case when 1=1 then 10 else 20 end,split('1,2,3,4,5,6,7',',')[0],split('1,2,3,4,5,6,7',',')[1], split('1,2,3,4,5,6,7',',')[2])
+  
