@@ -7,16 +7,17 @@ d = {'a':5,
     'e':77
    }
 
-def flaten(parent,d,mydict):
+def flatten(parent,d,mydict):
     
     for key,value in d.items():
+        
         if parent:
             callParent = parent +'.' +key
         else:
             callParent = key
             
         if isinstance(value,dict):
-            flaten(callParent,value,mydict)
+            flatten(callParent,value,mydict)
         else:
               mydict[callParent] = value
 
@@ -25,5 +26,6 @@ def flaten(parent,d,mydict):
 
 mydict = {}
 parent = None
-flaten(parent,d,mydict)    
+flatten(parent,d,mydict)    
 print(mydict)
+{'a': 5, 'b': 6, 'c.f': 9, 'c.g.m': 17, 'c.g.n': 3, 'e': 77}
