@@ -28,3 +28,4 @@ mydict = {}
 parent = ''
 flaten(parent,d,mydict)    
 print(mydict)
+{'a': 5, 'b': 6, 'c.f': 9, 'c.f.g.m': 17, 'c.f.g.m.n': 3}
