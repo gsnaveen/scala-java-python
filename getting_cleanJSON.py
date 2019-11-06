@@ -7,6 +7,7 @@ def processLog(inList):
     for row in inList:
         rowSplit = row.split('\n')
         for rowSplitVal in rowSplit:
+            rowSplitVal = rowSplitVal.strip()
             if rowSplitVal == '' : continue
 
             if rowSplitVal.startswith('{'):
@@ -24,7 +25,7 @@ def processLog(inList):
 
 
 
-inList = ['\n\n\n{"myKey1":[1,2,3,4',
+inList = ['\n\n\n{"myKey1":[1,2,3,4,',
           '5,6,7,8,',
           '9,10]}\n{"myKey1":[9,8,7]}']
 
