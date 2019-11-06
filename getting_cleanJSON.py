@@ -16,9 +16,10 @@ def processLog(inList):
                 theJSONString += rowSplitVal
                 OutData.append(json.loads(theJSONString))
                 theJSONString = ''
+                startJSON = False
             else:
                 theJSONString += rowSplitVal
-                
+
     return OutData
 
 
