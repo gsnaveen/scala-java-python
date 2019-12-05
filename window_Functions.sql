@@ -84,3 +84,16 @@ DENSE_RANK
 CUME_DIST
 PERCENT_RANK
 NTILE
+
+OFFSET start { ROW | ROWS }
+FETCH { FIRST | NEXT } [ row_count ] { ROW | ROWS } ONLY							 
+
+SELECT
+    film_id,
+    title
+FROM
+    film
+ORDER BY
+    title 
+OFFSET 5 ROWS 
+FETCH FIRST 5 ROW ONLY; 
