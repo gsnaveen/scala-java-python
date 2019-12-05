@@ -70,3 +70,17 @@ SELECT  a.user_id,a.revenue,sum(b.revenue) runningSum
   FROM schema1.subs_revenue a inner join schema1.subs_revenue b on a.user_id >= b.user_id
  group by a.user_id,a.revenue
  order by runningSum
+
+-- Rows for the window functions:
+COUNT(DISTINCT a) OVER (PARTITION BY c ORDER BY d ROWS BETWEEN 1 PRECEDING AND 1 FOLLOWING)
+
+(ROWS | RANGE) BETWEEN (UNBOUNDED | [num]) PRECEDING AND ([num] PRECEDING | CURRENT ROW | (UNBOUNDED | [num]) FOLLOWING)
+(ROWS | RANGE) BETWEEN CURRENT ROW AND (CURRENT ROW | (UNBOUNDED | [num]) FOLLOWING)
+(ROWS | RANGE) BETWEEN [num] FOLLOWING AND (UNBOUNDED | [num]) FOLLOWING
+							 
+RANK
+ROW_NUMBER
+DENSE_RANK
+CUME_DIST
+PERCENT_RANK
+NTILE
