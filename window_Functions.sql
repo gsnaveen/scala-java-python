@@ -97,3 +97,14 @@ ORDER BY
     title 
 OFFSET 5 ROWS 
 FETCH FIRST 5 ROW ONLY; 
+
+--Get 3rd highest
+select user_id
+from schema1.subs_revenue 
+order by user_id desc
+offset 2
+fetch first 1 row only
+
+select aa.user_id
+from schema1.subs_revenue aa 
+where 3 = (Select count(distinct b.user_id) from schema1.subs_revenue b where aa.user_id >= b.user_id)
