@@ -37,5 +37,5 @@ for file in os.listdir(baseTab):
 
 df = pd.DataFrame.from_records(Details,columns=['workbook','worksheet','connection','fieldnumber','name','label','type'])
 df.to_csv(os.path.join(baseTabout, 'wbfields.tsv'),header=True,index=False,sep='\t')
-df = pd.DataFrame.from_records(detailsdc,columns=['workbook','connection','name','Sourcemname','label','attr','role'])
+df = pd.DataFrame.from_records(detailsdc,columns=['workbook','connection','fieldname','name','caption','alias','role'])
 df.to_csv(os.path.join(baseTabout, 'wbfieldscon.tsv'),header=True,index=False,sep='\t')
