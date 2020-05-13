@@ -15,9 +15,9 @@ dated	dow	rows
 # Config
 dataFolder = './data/'
 file = 'dataLoads'
-dateCol = 'response_date'
+dateCol = 'dated'
 dowCol = 'dow'
-metricCol = 'response'
+metricCol = 'rows'
 
 df = pd.read_csv(os.path.join(dataFolder,file +".tsv"),header=0,sep='\t')
 df = df.sort_values(dateCol)
