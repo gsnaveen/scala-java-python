@@ -1,5 +1,4 @@
-import pandas as pd
-import os
+# from modules.imports import *
 
 """
 dated	dow	rows
@@ -11,6 +10,8 @@ dated	dow	rows
 2020-04-17	5	5001
 2020-04-18	6	2000
 """
+import pandas as pd
+import os
 
 # Config
 dataFolder = './data/'
@@ -24,16 +25,18 @@ df = df.sort_values(dateCol)
 # df['response_date'] = pd.to_datetime(df['response_date'].str.strip(),format='%Y-%m-%d')
 df[dateCol] = pd.to_datetime(df[dateCol],yearfirst=True)
 df['4WRolling'] = df[metricCol].rolling(28).mean().round()
-df['4WRollingStd'] = df[metricCol].rolling(28).std().round()
+df['4WRollingStd'] = df[metricCol].rolling(28).std(ddof=0).round()
+df['4WRollingStd1'] = df['4WRolling'] + df['4WRollingStd']
+df['4WRollingStd-1'] = df['4WRolling'] - df['4WRollingStd']
 df['7Rolling'] = df[metricCol].rolling(7).mean().round()
-df['7RollingStd'] = df[metricCol].rolling(7).std().round()
+df['7RollingStd'] = df[metricCol].rolling(7).std(ddof=0).round()
 
 forvalueLoopData_rolling_all = pd.DataFrame()
 forLoop = df[dowCol].unique()
 for i in forLoop:
     forvalueLoopData = df[df[dowCol] == i][[dateCol,metricCol]].sort_values(dateCol)
     forvalueLoopData['dowAvg'] = forvalueLoopData[metricCol].rolling(4).mean().round()
-    forvalueLoopData['dowStd'] = forvalueLoopData[metricCol].rolling(4).std().round()
+    forvalueLoopData['dowStd'] = forvalueLoopData[metricCol].rolling(8).std(ddof=0).round()
     forvalueLoopData_rolling_all = forvalueLoopData_rolling_all.append(forvalueLoopData)
 
 df = df.merge(forvalueLoopData_rolling_all,on=[dateCol,metricCol],how='inner')
