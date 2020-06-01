@@ -3,3 +3,15 @@ https://datasetsearch.research.google.com/search?query=puppies&docid=hghhhahdneI
 
 #NLP notebooks
 https://notebooks.quantumstat.com/
+
+#UC Irvine
+http://archive.ics.uci.edu/ml/index.php
+
+#Kaggle
+https://www.kaggle.com/datasets
+
+#OpenData AWS
+https://registry.opendata.aws/
+
+#Data Portals
+http://dataportals.org/search
