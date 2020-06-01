@@ -1,5 +1,5 @@
 #Google Dataset search
-https://datasetsearch.research.google.com/search?query=puppies&docid=hghhhahdneIHsA8HAAAAAA%3D%3D
+https://datasetsearch.research.google.com/
 
 #NLP notebooks
 https://notebooks.quantumstat.com/
