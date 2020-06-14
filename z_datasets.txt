@@ -15,3 +15,6 @@ https://registry.opendata.aws/
 
 #Data Portals
 http://dataportals.org/search
+
+#NewYork DataSet
+https://opendata.cityofnewyork.us/
