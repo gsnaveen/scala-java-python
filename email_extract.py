@@ -17,7 +17,10 @@ with open('./data/email/' + file +'.txt') as f:
 
 
 print('Total email address : ',len(outset))
-print(outset)
+outsetSorted = {}
+for key in  sorted(outset, key=outset.get, reverse=True):
+    outsetSorted[key]= outset[key]
+print(outsetSorted)
 print('+++++++++++++++++++++')
-for email in outset:
+for email in outsetSorted:
     print(email)
