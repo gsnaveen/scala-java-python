@@ -9,6 +9,7 @@ outset = defaultdict(int)
 with open('./data/email/' + file +'.txt') as f:
     data = f.readlines()
     for row in data:
+        row = re.sub('<|>|\'|`|;|,|\n', ' ', row)
         for word in row.lower().split(' '):
             if re.search('@',word) and re.search('\.org|\.net|\.com|\..{2}.*',word):
                  # outset.add(re.sub('<|>|\'|`|;|,|\n','',word))
