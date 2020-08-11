@@ -14,3 +14,6 @@ update anom1.jb_test set jb = jsonb_set(jb,'{namey}','"myname1"',False);
 
 --Will add the key value to the attribute
 update anom1.jb_test set jb = jsonb_set(jb,'{namex}','"myname1"',True);
+
+
+# https://stackoverflow.com/questions/26703476/how-to-perform-update-operations-on-columns-of-type-jsonb-in-postgres-9-4
