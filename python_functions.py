@@ -1,6 +1,7 @@
 import io
 import pandas as pd
 
+#Saving dataframe to a memory variable
 def getJsonDataFrame(inDF):
     # The Web API wrapper
     buffer = io.StringIO()
