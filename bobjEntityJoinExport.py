@@ -2,13 +2,13 @@ import pandas as pd
 import glob
 
 """
-bobjEntityJoinExport
+Data Foundation bobjEntityJoinExport
 -------------------------------------------------
         
 General Information
 -------------------------------------------------
             
-    Data bobjEntityJoinExport
+    Data Foundation bobjEntityJoinExport
     -------------------------------------------------
     Data Foundation for bobjEntityJoinExport Universe.
 Initial version created on 11-Sep-2017.
