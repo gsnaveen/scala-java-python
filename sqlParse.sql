@@ -1,8 +1,10 @@
+import pandas as pd
+import glob,re
 import itertools
 import sqlparse
-
 from sqlparse.sql import IdentifierList, Identifier
 from sqlparse.tokens import Keyword, DML
+
 
 """
 https://gist.github.com/az0/0a5d4abcaac5b86a62df49115d634c66
@@ -57,9 +59,42 @@ def extract_tables(sql):
     return list(itertools.chain(*extracted_tables))
 
 
+basefolder = './data/sqlParse/'
+infolder = basefolder + 'in/'
+outfolder = basefolder + 'out/'
+sqltables = []
+#billed_redeemed
+# billed_redeemed_expenses
+filelist = glob.glob(infolder+ '*.mssql')
+for fullpathwithfilename in filelist:
+    # sql = open(fullpathwithfilename, 'r').read().replace('\n', ' ').replace('--','')
+    sql = re.sub(r'--.*', '', open(fullpathwithfilename, 'r').read().lower()).replace('\n', ' ').replace('with (nolock)','')
+    # print(sql)
+    # parsed = sqlparse.parse(sql)
+    # print(parsed)
+    # print(len(extract_tables(sql)),len(set(extract_tables(sql))))
+    sqlFileName = fullpathwithfilename.split('/')[-1]
+    # print(extract_tables(sql))
+    for table in extract_tables(sql):
+        # print(table)
+        if table.startswith('('):
+            # print(type(table))
+            tabSQL = table.strip()[1:table.rfind(')')]
 
-sql = 'Select a,b,c from abc'
+            subTables = extract_tables(tabSQL)
 
-parsed = sqlparse.parse(sql)
+            for subtable in subTables:
+                if subtable.startswith('('):
+                    subtabSQL = subtable.strip()[1:subtable.rfind(')')]
+                    subsubTables = extract_tables(subtabSQL)
+                    for subsubtable2 in subsubTables:
+                        sqltables.append([sqlFileName, '@SubQuery-Level2', subsubtable2])
 
-print(extract_tables(sql))
+                else:
+                    sqltables.append([sqlFileName,'@SubQuery-Level1', subtable])
+        else:
+            sqltables.append([sqlFileName, 'core', table])
+
+
+tablesDfJoins = pd.DataFrame.from_records(sqltables, columns=['file','cat', 'table'])
+tablesDfJoins.to_csv(outfolder  + 'ALL_entityList.tsv', header=True, sep='\t', index=False)
