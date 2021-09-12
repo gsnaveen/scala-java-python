@@ -74,6 +74,7 @@ for index, row in df.iterrows():
     for col in tabDiffInData:
 
         theVal = "{val}".format(val=row[col]).strip()
+        theVal = re.sub("'","''",theVal)
         if (theVal == 'nan') or (pd.isna(theVal)) or (pd.isnull(theVal)) or (theVal == None) or (theVal == ''):
             theVal = 'null'
 
