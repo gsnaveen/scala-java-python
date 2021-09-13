@@ -74,3 +74,28 @@ df = pd.DataFrame.from_records(detailsdc,columns=['workbook','connection','field
 df.to_csv(os.path.join(baseTabout, extension + '_wbfieldscon.tsv'),header=True,index=False,sep='\t')
 df = pd.DataFrame.from_records(detailsdcKeyword,columns=['workbook','connection','fieldname','name','caption','alias','role','keyword'])
 df.to_csv(os.path.join(baseTabout, extension + '_wbfieldscon_keyword.tsv'),header=True,index=False,sep='\t')
+
+'''
+with da as (select distinct workbook, attrname, caption, attrtype, lower(keyword) keyword
+from optics.tableau_sheetfields),
+keySecond as (select da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword keyword1, da2.keyword keyword2
+				from da da1 inner join da da2 on 
+				da1.workbook = da2.workbook and da1.attrname = da2.attrname 
+				and  da1.caption = da2.caption and da1.attrtype = da2.attrtype),
+keyThird as (select da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword1, da1.keyword2, da2.keyword keyword3
+				from keySecond da1 inner join da da2 on 
+				da1.workbook = da2.workbook and da1.attrname = da2.attrname 
+				and  da1.caption = da2.caption and da1.attrtype = da2.attrtype),
+key4th as (select da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword1, da1.keyword2,da1.keyword3 ,da2.keyword keyword4
+				from keyThird da1 inner join da da2 on 
+				da1.workbook = da2.workbook and da1.attrname = da2.attrname 
+				and  da1.caption = da2.caption and da1.attrtype = da2.attrtype),			
+base as (select da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4,count(*) times
+			from key4th da1 
+			where keyword1 != keyword2 and keyword1 != keyword3 and keyword1 != keyword4 
+					and keyword2 != keyword3 and keyword2 != keyword4 and keyword3 != keyword4
+			group by da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4)
+select workbook,da1.caption,attrtype, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4,Sum(times) times 
+from base da1
+group by workbook,da1.caption,attrtype, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4
+'''
