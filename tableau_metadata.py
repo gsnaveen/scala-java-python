@@ -76,26 +76,46 @@ df = pd.DataFrame.from_records(detailsdcKeyword,columns=['workbook','connection'
 df.to_csv(os.path.join(baseTabout, extension + '_wbfieldscon_keyword.tsv'),header=True,index=False,sep='\t')
 
 '''
-with da as (select distinct workbook, attrname, caption, attrtype, lower(keyword) keyword
-from optics.tableau_sheetfields),
-keySecond as (select da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword keyword1, da2.keyword keyword2
-				from da da1 inner join da da2 on 
-				da1.workbook = da2.workbook and da1.attrname = da2.attrname 
+with base0 as (select distinct workbook, attrname, lower(caption) caption, attrtype, lower(keyword) keyword
+						from optics.tableau_sheetfields where keyword is not null
+						),
+base1count as (select workbook, attrname, caption, attrtype, count(*) words
+				from base0 group by workbook, attrname, caption, attrtype),
+base as ( select base0.workbook, base0.attrname, base0.caption, base0.attrtype,base1count.words,base0.keyword
+		from base0 inner join base1count on
+		base0.workbook = base1count.workbook and base0.attrname = base1count.attrname
+		and  base0.caption = base1count.caption and  base0.attrtype = base1count.attrtype),
+keySecond as (select distinct da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words,da1.keyword keyword1, case when da1.words > 1 then da2.keyword else null end keyword2
+				from base da1 inner join base da2 on
+				da1.workbook = da2.workbook and da1.attrname = da2.attrname
 				and  da1.caption = da2.caption and da1.attrtype = da2.attrtype),
-keyThird as (select da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword1, da1.keyword2, da2.keyword keyword3
-				from keySecond da1 inner join da da2 on 
-				da1.workbook = da2.workbook and da1.attrname = da2.attrname 
+key3rd as (select distinct da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1, da1.keyword2, case when da1.words > 2 then da2.keyword else null end keyword3
+				from keySecond da1 inner join base da2 on
+				da1.workbook = da2.workbook and da1.attrname = da2.attrname
 				and  da1.caption = da2.caption and da1.attrtype = da2.attrtype),
-key4th as (select da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword1, da1.keyword2,da1.keyword3 ,da2.keyword keyword4
-				from keyThird da1 inner join da da2 on 
-				da1.workbook = da2.workbook and da1.attrname = da2.attrname 
-				and  da1.caption = da2.caption and da1.attrtype = da2.attrtype),			
-base as (select da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4,count(*) times
-			from key4th da1 
-			where keyword1 != keyword2 and keyword1 != keyword3 and keyword1 != keyword4 
-					and keyword2 != keyword3 and keyword2 != keyword4 and keyword3 != keyword4
-			group by da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4)
-select workbook,da1.caption,attrtype, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4,Sum(times) times 
-from base da1
-group by workbook,da1.caption,attrtype, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4
+key4th as (select distinct da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1, da1.keyword2,da1.keyword3 ,case when da1.words > 3 then da2.keyword else null end keyword4
+				from key3rd da1 inner join base da2 on
+				da1.workbook = da2.workbook and da1.attrname = da2.attrname
+				and  da1.caption = da2.caption and da1.attrtype = da2.attrtype),
+baseUnion as (select distinct da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4,count(*) times
+			from key4th da1 where words =1
+			group by da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4
+		 union all
+		 select distinct da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4,count(*) times
+			from key4th da1 where words =2 and keyword1 != keyword2
+			group by da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4
+		union all
+		 select distinct da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4,count(*) times
+			from key4th da1 where words =3 and ((keyword1 != keyword2 and keyword1 != keyword3) and (keyword2 != keyword3))
+			group by da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4
+		union all
+		 select distinct da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4,count(*) times
+			from key4th da1 where words > 3 and ((keyword1 != keyword2 and keyword1 != keyword3 and keyword1 != keyword4) and (keyword2 != keyword3 and keyword2 != keyword4) and ((keyword3 != keyword4)))
+			group by da1.workbook, da1.attrname, da1.caption, da1.attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4
+--			where keyword1 != coalesce(keyword2,'') and keyword1 != coalesce(keyword3,'') and keyword1 != coalesce(keyword4,'')
+--					and coalesce(keyword2,' ') != coalesce(keyword3,'') and coalesce(keyword2,' ') != coalesce(keyword4,'') and coalesce(keyword3,'  ') != coalesce(keyword4,'')
+			)
+select workbook,da1.caption,attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4,Sum(times) times
+from baseUnion da1
+group by workbook,da1.caption,attrtype, da1.words, da1.keyword1 , da1.keyword2 , da1.keyword3,da1.keyword4
 '''
