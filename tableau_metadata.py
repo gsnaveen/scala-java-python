@@ -1,5 +1,5 @@
 from tableaudocumentapi import Workbook, Datasource
-import os
+import os,re
 import pandas as pd
 
 baseLoc = "../../data/"
