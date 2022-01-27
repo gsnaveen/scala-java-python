@@ -7,7 +7,14 @@ import pandas as pd
 
 conn = connect(role_arn="arn:aws:iam::129:role/mydatabase.dev",
                region_name="us-west-2", work_group="myworkgroup",aws_access_key_id='AXYDA',aws_secret_access_key='theKey')
-
+'''
+conn = connect(region_name="us-west-2"
+               ,aws_access_key_id='rrrrr'
+               ,aws_secret_access_key='aaaaa'
+               ,aws_session_token='yyyyy'
+               ,s3_staging_dir="s3://aws-athena-query-results-5566565656-us-west-2/users/userid/"
+               ,work_group="users")
+'''
 cur = conn.cursor()
 
 sql_query = "SHOW DATABASES"
