@@ -1,0 +1,5 @@
+how to call Sankey
+http://localhost:90/d3js/sankey/sankey.html?myfile=sankey1.csv
+
+Source and Traget should not have the same value
+Values should not have "," in them
