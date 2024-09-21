@@ -3,6 +3,7 @@ import pandas as pd
 import sqlite3
 import duckdb
 
+#pip install xlsxwriter
 writer = pd.ExcelWriter('datacatalog_excel.xlsx', engine='xlsxwriter')
 connSQLlite = sqlite3.connect("datacatalog_sqlite.db")
 duckdbconn = duckdb.connect("datacatalog_duckdb.db")
