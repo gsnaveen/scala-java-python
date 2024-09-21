@@ -17,3 +17,10 @@ duckdbconn.sql("CREATE TABLE {target_table} AS SELECT * FROM {sourcedf}".format(
 # duckdbconn.sql("CREATE TABLE {database}.main.{target_table} AS SELECT * FROM {sourcedf}".format(database='datacatalog',target_table= 'summarysheet', sourcedf='dfsummarySheet'))
 writer._save()
 duckdbconn.close()
+
+"""
+File Size
+Excel   = 05.79 MB
+SQlite  = 12.70 MB
+DuckDB  = 07.76 MB
+"""
