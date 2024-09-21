@@ -1,7 +1,7 @@
 
 import pandas as pd
-import sqlite3
-import duckdb
+import sqlite3 # https://www.sqlite.org/docs.html
+import duckdb  # https://duckdb.org/docs/api/python/overview.html
 
 #pip install xlsxwriter
 writer = pd.ExcelWriter('datacatalog_excel.xlsx', engine='xlsxwriter')
