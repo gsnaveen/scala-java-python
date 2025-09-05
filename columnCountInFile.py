@@ -3,7 +3,7 @@ from collections import defaultdict
 
 parser = argparse.ArgumentParser(description='Copy S3 file for a date')
 parser.add_argument('--file', dest='filename', type=str, help='Name of the File')
-parser.add_argument('--colnum', dest='numCols', type=int, help='Date of the files')
+parser.add_argument('--colnum', dest='numCols', type=int, help='Number of columns in file')
 
 args = parser.parse_args()
 print(args.filename)
