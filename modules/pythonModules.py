@@ -10,3 +10,6 @@ pip install cogdb    -- Graph database
 --Network
 pip install networkx[default,extra]
 pip install pygraphviz pydot lxml
+
+-Embeddings
+pip install sentence_transformers
