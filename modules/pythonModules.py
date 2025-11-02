@@ -22,3 +22,4 @@ pip install loguru
 
 -Web Application
 pip install streamlit
+pip install streamlit-searchbox
