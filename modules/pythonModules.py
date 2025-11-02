@@ -16,3 +16,6 @@ pip install pygraphviz pydot lxml
 
 -Embeddings
 pip install sentence_transformers
+
+-Logging
+pip install loguru
