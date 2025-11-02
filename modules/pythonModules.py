@@ -19,3 +19,6 @@ pip install sentence_transformers
 
 -Logging
 pip install loguru
+
+-Web Application
+pip install streamlit
