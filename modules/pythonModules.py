@@ -8,6 +8,7 @@ pip install duckdb   -- analytics database
 pip install cogdb    -- Graph database
 pip install node2vec
 pip install deepwalk
+pip install psycopg2 -- RDBMS
 
 
 --Network
